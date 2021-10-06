@@ -14,8 +14,6 @@ jobs:
   CodeQualityApi:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    env:
-      LARASTAN_VERSION: ^0.7.12
     steps:
     - uses: actions/checkout@v2
     - uses: shivammathur/setup-php@v2
@@ -26,16 +24,15 @@ jobs:
       id: composer-cache-dir-path
       run: |
         echo "::set-output name=dir::$(composer config cache-files-dir)"
-    - name: Cache larastan install
-      uses: actions/cache@v2
+    - uses: actions/cache@v2
       with:
         path: ${{ steps.composer-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-larastan-${{ env.LARASTAN_VERSION }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-larastan-
-    - name: Install larastan
+          ${{ runner.os }}-composer-
+    - name: Install project dependencies
       working-directory: api
-      run: composer require --dev --no-progress --prefer-dist nunomaduro/larastan:$LARASTAN_VERSION
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
     - name: Run larastan
       working-directory: api
       run: ./vendor/bin/phpstan --memory-limit=1G analyse
