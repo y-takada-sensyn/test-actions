@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
-          cache-dependency-path: 'client/yarn.lock'
+          # cache-dependency-path: 'client/yarn.lock'
       - name: Install project dependencies
         working-directory: client
         run: yarn install -s --no-progress
