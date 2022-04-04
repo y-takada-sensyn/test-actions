@@ -8,8 +8,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: run linter
-        run: echo lint completed
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          cache-dependency-path: 'client/yarn.lock'
+      - name: Install project dependencies
+        working-directory: client
+        run: yarn install -s --no-progress
+      - name: Run client linter check
+        working-directory: client
+        run: yarn run lint
 
   CodeQualityApi:
     runs-on: ubuntu-latest
